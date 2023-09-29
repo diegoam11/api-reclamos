@@ -1,28 +1,10 @@
-from fastapi import FastAPI, HTTPException, Depends
-from pydantic import BaseModel
-from typing import List, Annotated
-
-from models.reclamo import Reclamo
-from repositories.reclamo_repository import ReclamoRepository
-from schemas.base import ReclamoBase
-
-from config.database import engine, SessionLocal
-from sqlalchemy.orm import Session
+from fastapi import FastAPI
+from routes import reclamo_routes
 
 app = FastAPI()
-Reclamo.metadata.create_all(bind=engine)
 
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+app.include_router(reclamo_routes.router)
 
-db_dependency = Annotated[Session, Depends(get_db)]
-reclamo_repository = ReclamoRepository
-
-@app.post("/reclamoss/")
-async def create_reclamos(reclamo: ReclamoBase, db: db_dependency):
-    db_reclamo = reclamo_repository(db).create_reclamo(reclamo.descripcion)
-    return db_reclamo
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)
