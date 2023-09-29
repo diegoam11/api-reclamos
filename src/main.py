@@ -22,7 +22,7 @@ def get_db():
 db_dependency = Annotated[Session, Depends(get_db)]
 reclamo_repository = ReclamoRepository
 
-@app.post("/reclamos/")
+@app.post("/reclamoss/")
 async def create_reclamos(reclamo: ReclamoBase, db: db_dependency):
     db_reclamo = reclamo_repository(db).create_reclamo(reclamo.descripcion)
     return db_reclamo
