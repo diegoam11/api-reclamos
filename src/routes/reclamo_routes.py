@@ -21,5 +21,5 @@ reclamo_repository = ReclamoRepository
 
 @router.post("/reclamos/")
 async def create_reclamos(reclamo: ReclamoBase, db: db_dependency):
-    db_reclamo = reclamo_repository(db).create_reclamo(reclamo.descripcion)
+    db_reclamo = reclamo_repository(db).create_reclamo(reclamo.dict())
     return db_reclamo
