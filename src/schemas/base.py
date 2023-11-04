@@ -13,3 +13,9 @@ class ReclamoBase(BaseModel):
     forma_respuesta: int
     fecha_reclamo: date
 
+class QuejaBase(BaseModel):
+    id_cliente: int
+    descripcion: str
+    peticion_cliente: str
+    forma_respuesta: int
+    fecha_queja: date
