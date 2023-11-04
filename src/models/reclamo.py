@@ -21,5 +21,4 @@ class Reclamo(Base):
     acciones_tomadas = Column(String)
     fecha_respuesta = Column(Date)
 
-    # Define una relación con la tabla 'tipo_reclamo'
     tipo_reclamo = relationship("TipoReclamo", back_populates="reclamos")

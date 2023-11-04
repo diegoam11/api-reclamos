@@ -11,3 +11,11 @@ class ReclamoRepository:
         self.db.commit()
         self.db.refresh(db_reclamo)
         return db_reclamo
+
+    def get_reclamos(self):
+        return self.db.query(Reclamo).all()
+    
+    def get_reclamo_by_id_cliente(self, id_cliente: int):
+        return self.db.query(Reclamo).filter(Reclamo.id_cliente == id_cliente).all()
+
+        
