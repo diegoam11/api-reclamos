@@ -36,9 +36,7 @@ def get_quejas(db: Session = Depends(get_db)):
 @router.get("/quejas/{id_cliente}")
 def get_queja_de_cliente(id_cliente: int, db: Session = Depends(get_db)):
     try:
-        queja = queja_repository.get_queja_by_id_cliente(db, id_cliente)  
-        if not queja:
-            raise HTTPException(status_code=404, detail="Queja no encontrado")
-        return queja
+        quejas = queja_repository.get_queja_by_id_cliente(db, id_cliente)  
+        return quejas        
     except Exception as e:
         raise HTTPException(status_code=500, detail="Error interno del servidor")

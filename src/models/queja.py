@@ -6,10 +6,19 @@ class Queja(Base):
 
     id_queja = Column(Integer, primary_key=True, index=True)
     id_cliente = Column(Integer)
-    descripcion = Column(String) 
-    peticion_cliente = Column(String) 
+
+    tipo_bien_contratado = Column(Integer) 
+    orden_compra = Column(Integer) 
+    codigo_producto = Column(Integer) 
+    fecha_compra = Column(Date) 
+    
     forma_respuesta = Column(Integer)
-    fecha_queja = Column(Date)
-    estado = Column(Integer)
+    fecha_queja = Column(Date) 
+    
+    detalle_queja = Column(String) 
+    peticion_cliente = Column(String) 
+    
     acciones_tomadas = Column(String)
+    estado = Column(Integer)
     fecha_respuesta = Column(Date)
+    fecha_limite = Column(Date)

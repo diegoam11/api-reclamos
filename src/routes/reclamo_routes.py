@@ -15,7 +15,7 @@ def get_db() -> Session:
     finally:
         db.close()
 
-reclamo_repository = ReclamoRepository() 
+reclamo_repository = ReclamoRepository()
 
 @router.post("/reclamos/")
 async def create_reclamos(reclamo: ReclamoBase, db: Session = Depends(get_db)):
@@ -25,20 +25,20 @@ async def create_reclamos(reclamo: ReclamoBase, db: Session = Depends(get_db)):
     except Exception as e:
         raise HTTPException(status_code=500, detail="Error interno del servidor")
 
+
 @router.get("/reclamos/")
 def get_reclamos(db: Session = Depends(get_db)):
     try:
-        db_reclamos = reclamo_repository.get_reclamos(db) 
+        db_reclamos = reclamo_repository.get_reclamos(db)
         return db_reclamos
     except Exception as e:
         raise HTTPException(status_code=500, detail="Error interno del servidor")
 
+
 @router.get("/reclamos/{id_cliente}")
 def get_reclamo_de_cliente(id_cliente: int, db: Session = Depends(get_db)):
     try:
-        reclamo = reclamo_repository.get_reclamo_by_id_cliente(db, id_cliente)  
-        if not reclamo:
-            raise HTTPException(status_code=404, detail="Reclamo no encontrado")
+        reclamo = reclamo_repository.get_reclamo_by_id_cliente(db, id_cliente)
         return reclamo
     except Exception as e:
         raise HTTPException(status_code=500, detail="Error interno del servidor")

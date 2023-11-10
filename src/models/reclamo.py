@@ -9,16 +9,22 @@ class Reclamo(Base):
     id_reclamo = Column(Integer, primary_key=True, index=True)
     id_cliente = Column(Integer)
     id_tipo_reclamo = Column(Integer, ForeignKey('tipo_reclamo.id_tipo_reclamo'))
-    tipo_bien_contratado = Column(Integer)
-    codigo_producto = Column(Integer)
+
+    tipo_bien_contratado = Column(Integer) # producto, servicio (setear)
     orden_compra = Column(Integer)
-    descripcion = Column(String)
+    codigo_producto = Column(Integer)
+    fecha_compra = Column(Date) #AGREGADO
+    
+    forma_respuesta = Column(String) # Correo Electrónico, Carta, Presencial (setear)
+    fecha_reclamo = Column(Date)
+
+    detalle_reclamo = Column(String)
     monto_reclamado = Column(Numeric)
     peticion_del_cliente = Column(String)
-    forma_respuesta = Column(Integer)
-    fecha_reclamo = Column(Date)
-    estado = Column(Integer)
-    acciones_tomadas = Column(String)
-    fecha_respuesta = Column(Date)
+
+    acciones_tomadas = Column(String)    
+    estado = Column(Integer) # pendiente, resuelto
+    fecha_respuesta = Column(Date) #fecha resolución
+    fecha_limite = Column(Date)  #AGREGADO
 
     tipo_reclamo = relationship("TipoReclamo", back_populates="reclamos")
