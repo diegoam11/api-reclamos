@@ -6,7 +6,7 @@ class ReclamoBase(BaseModel):
     id_tipo_reclamo: int
 
     fecha_reclamo: date
-    forma_respuesta: int
+    forma_respuesta: str
     tipo_bien_contratado: int
     fecha_compra: date
     orden_compra: int

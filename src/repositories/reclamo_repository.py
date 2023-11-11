@@ -1,7 +1,6 @@
 from sqlalchemy.orm import Session
 from models.reclamo import Reclamo
 
-
 class ReclamoRepository:
     def create_reclamo(self, db: Session, reclamo_data):
         db_reclamo = Reclamo(**reclamo_data)
