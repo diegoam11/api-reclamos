@@ -16,7 +16,7 @@ class Solicitud(Base):
     orden_compra = Column(Integer)
     descripcion = Column(String)
     peticion_del_cliente = Column(String)
-    forma_respuesta = Column(Integer)
+    forma_respuesta = Column(String)
     fecha_solicitud = Column(Date)
     estado = Column(Integer)
     acciones_tomadas = Column(String)

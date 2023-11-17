@@ -1,3 +1,18 @@
+# Ignorar directorios generados por Python
 __pycache__/
-/env
-/venv
+env/
+venv/
+
+# Ignorar archivos de configuración específicos del entorno de desarrollo
+*.pyc
+*.pyo
+*.pyd
+
+# Ignorar archivos relacionados con entornos virtuales de Python
+.pycache/
+.pyo
+.pyd
+
+# Ignorar archivos y directorios específicos de IDEs
+.idea/
+.vscode/

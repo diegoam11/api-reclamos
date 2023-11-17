@@ -19,7 +19,7 @@ class ReclamoBase(BaseModel):
 class QuejaBase(BaseModel):
     id_cliente: int
     fecha_queja: date
-    forma_respuesta: int
+    forma_respuesta: str
     tipo_bien_contratado: int
     fecha_compra: date
     orden_compra: int
@@ -36,5 +36,5 @@ class SolicitudBase(BaseModel):
     orden_compra: int
     descripcion: str
     peticion_del_cliente: str
-    forma_respuesta: int
+    forma_respuesta: str
     fecha_solicitud: date

@@ -12,7 +12,7 @@ class Queja(Base):
     codigo_producto = Column(Integer) 
     fecha_compra = Column(Date) 
     
-    forma_respuesta = Column(Integer)
+    forma_respuesta = Column(String)
     fecha_queja = Column(Date) 
     
     detalle_queja = Column(String) 
