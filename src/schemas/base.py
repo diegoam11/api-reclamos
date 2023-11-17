@@ -28,3 +28,14 @@ class QuejaBase(BaseModel):
     peticion_cliente: str
     
     
+
+class SolicitudBase(BaseModel):
+    id_cliente: int
+    id_tipo_solicitud: int
+    tipo_bien_contratado: int
+    codigo_producto: int
+    orden_compra: int
+    descripcion: str
+    peticion_del_cliente: str
+    forma_respuesta: int
+    fecha_solicitud: date
