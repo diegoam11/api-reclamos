@@ -14,5 +14,4 @@ venv/
 .pyd
 
 # Ignorar archivos y directorios específicos de IDEs
-.idea/
 .vscode/
