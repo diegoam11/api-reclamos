@@ -15,7 +15,6 @@ class ReclamoBase(BaseModel):
     monto_reclamado: float
     peticion_cliente: str
     
-
 class QuejaBase(BaseModel):
     id_cliente: int
     fecha_queja: date
@@ -26,8 +25,6 @@ class QuejaBase(BaseModel):
     codigo_producto: int
     detalle_queja: str
     peticion_cliente: str
-    
-    
 
 class SolicitudBase(BaseModel):
     id_cliente: int

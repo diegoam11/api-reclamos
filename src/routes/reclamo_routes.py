@@ -1,4 +1,3 @@
-# reclamo_routes.py
 from fastapi import APIRouter, HTTPException, Depends
 from sqlalchemy.orm import Session
 from config.database import database_config
@@ -38,20 +37,6 @@ reclamo_repository = ReclamoRepository()
 async def create_reclamos(reclamo: ReclamoBase, db: Session = Depends(get_db)):
     try:
         db_reclamo = reclamo_repository.create_reclamo(db, reclamo.dict())
-
-        forma_respuesta = FormaRespuesta(reclamo.forma_respuesta.lower())
-
-        if forma_respuesta == FormaRespuesta.EMAIL:
-            email_strategy = EmailResponseStrategy()
-            db_reclamo.set_response_strategy(email_strategy)
-        elif forma_respuesta == FormaRespuesta.LETTER:
-            letter_strategy = LetterResponseStrategy()
-            db_reclamo.set_response_strategy(letter_strategy)
-        elif forma_respuesta == FormaRespuesta.IN_PERSON:
-            in_person_strategy = InPersonResponseStrategy()
-            db_reclamo.set_response_strategy(in_person_strategy)
-
-        db_reclamo.execute_response_strategy()
         return db_reclamo
     except Exception as e:
         raise HTTPException(status_code=500, detail="Error interno del servidor")

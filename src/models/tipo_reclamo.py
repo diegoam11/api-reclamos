@@ -13,4 +13,4 @@ class TipoReclamo(Base):
     
     # Define una relación inversa con la tabla 'reclamo'
     reclamos = relationship("Reclamo", back_populates="tipo_reclamo")
-    area = relationship("Area", back_populates="tipos_reclamo")
+    area = relationship("Area", back_populates="tipo_reclamo")

@@ -1,5 +1,3 @@
-# la info entre las lineas 12 y 14 no pertenecen a un id de ventas o algo parecido?
-
 from models.tipo_solicitud import TipoSolicitud
 from sqlalchemy import Column, Integer, String, Numeric, Date, ForeignKey
 from sqlalchemy.orm import relationship

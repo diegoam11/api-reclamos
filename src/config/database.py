@@ -12,7 +12,7 @@ class DatabaseConfigSingleton:
             cls._instance.SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=cls._instance.engine)
         return cls._instance
 
-URL_DATABASE = 'postgresql://user1:123@127.0.0.1:5432/modulo_rqs'
+URL_DATABASE = 'postgresql://user1:R4Jq7r9YyhtZCBGS9zSzZA0ZPLHBnA8w@dpg-clbfgoent67s73advds0-a.oregon-postgres.render.com/database_rqs'
 database_config = DatabaseConfigSingleton()
 
 Base = declarative_base()
