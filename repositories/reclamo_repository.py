@@ -27,7 +27,7 @@ class ReclamoRepository:
     def _get_reclamos_query(self, db: Session):
         return db.query(
             Reclamo.id_reclamo,
-            Reclamo.tipo_bien_contratado,
+            Reclamo.tipo_bien_contratado.label("id_tipo_bien_contratado"),
             case(
                 (Reclamo.tipo_bien_contratado == 0, "producto"),
                 (Reclamo.tipo_bien_contratado != 0, "servicio"),
@@ -36,6 +36,7 @@ class ReclamoRepository:
             Reclamo.forma_respuesta,
             Reclamo.detalle_reclamo,
             Reclamo.peticion_cliente,
+            Reclamo.estado.label("id_estado"),
             case(
                 (Reclamo.estado is None, "pendiente"),
                 (Reclamo.estado == 0, "pendiente"),
@@ -43,6 +44,7 @@ class ReclamoRepository:
                 (Reclamo.estado == 2, "resuelto"),
             ).label("estado"),
             Reclamo.fecha_limite,
+            Reclamo.id_tipo_reclamo,
             TipoReclamo.nombre.label("tipo_reclamo"),
             Reclamo.id_cliente,
             Reclamo.orden_compra,
