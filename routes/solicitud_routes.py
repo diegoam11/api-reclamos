@@ -28,7 +28,7 @@ async def create_solicitudes(solicitud: SolicitudBase, db: Session = Depends(get
 @router.get("/solicitudes/")
 def get_solicitudes(db: Session = Depends(get_db)):
     try:
-        db_solicitudes = solicitud_repository.get_solicitudes(db) 
+        db_solicitudes = solicitud_repository.get_solicitudes(db)
         return db_solicitudes
     except Exception as e:
         raise HTTPException(status_code=500, detail="Error interno del servidor")
