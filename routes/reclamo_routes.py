@@ -1,22 +1,15 @@
-# reclamo_routes.py
 from fastapi import APIRouter, HTTPException, Depends
 from sqlalchemy.orm import Session
 from config.database import database_config
 from models.reclamo import Reclamo
 from repositories.reclamo_repository import ReclamoRepository
-from schemas.base import ReclamoBase
-from enum import Enum
-from strategies.strategies import (
-    EmailResponseStrategy,
-    LetterResponseStrategy,
-    InPersonResponseStrategy,
-)
+from schemas.base import ReclamoBase, ReclamoUpdated, ReclamoActions
 
 
-class FormaRespuesta(Enum):
-    EMAIL = "email"
-    LETTER = "letter"
-    IN_PERSON = "in_person"
+class CustomException(Exception):
+    def __init__(self, status_code: int, detail: str):
+        self.status_code = status_code
+        self.detail = detail
 
 
 router = APIRouter()
@@ -52,10 +45,73 @@ def get_reclamos(db: Session = Depends(get_db)):
         raise HTTPException(status_code=500, detail="Error interno del servidor")
 
 
-@router.get("/reclamos/{id_cliente}")
+@router.get("/reclamos/{id_reclamo}")
+def get_reclamo_por_id(id_reclamo: int, db: Session = Depends(get_db)):
+    try:
+        reclamo = reclamo_repository.get_reclamo_by_id(db, id_reclamo)
+        if reclamo is None:
+            raise CustomException(status_code=404, detail="Reclamo not found")
+        return reclamo
+    except CustomException as ce:
+        raise HTTPException(status_code=ce.status_code, detail=ce.detail)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="Error interno del servidor")
+
+
+@router.get("/reclamos/cliente/{id_cliente}")
 def get_reclamo_de_cliente(id_cliente: int, db: Session = Depends(get_db)):
     try:
         reclamo = reclamo_repository.get_reclamo_by_id_cliente(db, id_cliente)
+        if reclamo is None:
+            raise CustomException(status_code=404, detail="Reclamo not found")
         return reclamo
+    except CustomException as ce:
+        raise HTTPException(status_code=ce.status_code, detail=ce.detail)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="Error interno del servidor")
+
+
+@router.patch("/reclamos/updateReclamo/{id_reclamo}")
+def update_reclamo(
+    id_reclamo: int, reclamo_updated: ReclamoUpdated, db: Session = Depends(get_db)
+):
+    try:
+        reclamo = reclamo_repository.get_reclamo_by_id(db, id_reclamo)
+
+        if reclamo is None:
+            raise CustomException(status_code=404, detail="Reclamo not found")
+
+        for key, value in reclamo_updated.dict().items():
+            setattr(reclamo, key, value)
+
+        db.add(reclamo)
+        db.commit()
+        db.refresh(reclamo)
+        return reclamo
+    except CustomException as ce:
+        raise HTTPException(status_code=ce.status_code, detail=ce.detail)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="Error interno del servidor")
+
+
+@router.patch("/reclamos/actions/{id_reclamo}")
+def update_reclamo(
+    id_reclamo: int, reclamo_actions: ReclamoActions, db: Session = Depends(get_db)
+):
+    try:
+        reclamo = reclamo_repository.get_reclamo_by_id(db, id_reclamo)
+
+        if reclamo is None:
+            raise CustomException(status_code=404, detail="Reclamo not found")
+
+        for key, value in reclamo_actions.dict().items():
+            setattr(reclamo, key, value)
+
+        db.add(reclamo)
+        db.commit()
+        db.refresh(reclamo)
+        return reclamo
+    except CustomException as ce:
+        raise HTTPException(status_code=ce.status_code, detail=ce.detail)
     except Exception as e:
         raise HTTPException(status_code=500, detail="Error interno del servidor")
