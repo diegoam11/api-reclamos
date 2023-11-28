@@ -65,17 +65,12 @@ class ReclamoRepository:
 
         return result
 
+    def get_reclamo_by_id(self, db: Session, id_reclamo: int):
+        return db.query(Reclamo).filter(Reclamo.id_reclamo == id_reclamo).one_or_none()
+
     def get_reclamo_by_id_cliente(self, db: Session, id_cliente: int):
-        reclamos = (
-            self._get_reclamos_query(db).filter(Reclamo.id_cliente == id_cliente).all()
-        )
-
-        result = []
-        for reclamo in reclamos:
-            reclamo_dict = dict(reclamo._asdict())
-            result.append(reclamo_dict)
-
-        return result
+        reclamo = db.query(Reclamo).filter(Reclamo.id_cliente == id_cliente).all()
+        return reclamo or None
 
     def _calculate_fecha_limite(self, fecha_reclamo):
         delta_dias = 15
