@@ -38,10 +38,9 @@ class ReclamoRepository:
             Reclamo.peticion_cliente,
             Reclamo.estado.label("id_estado"),
             case(
-                (Reclamo.estado is None, "pendiente"),
-                (Reclamo.estado == 0, "pendiente"),
-                (Reclamo.estado == 1, "derivado"),
-                (Reclamo.estado == 2, "resuelto"),
+                (Reclamo.estado is None, "derivado"),
+                (Reclamo.estado == 0, "derivado"),
+                (Reclamo.estado == 1, "resuelto"),
             ).label("estado"),
             Reclamo.fecha_limite,
             Reclamo.id_tipo_reclamo,

@@ -71,29 +71,6 @@ def get_reclamo_de_cliente(id_cliente: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=500, detail="Error interno del servidor")
 
 
-@router.patch("/reclamos/updateReclamo/{id_reclamo}")
-def update_reclamo(
-    id_reclamo: int, reclamo_updated: ReclamoUpdated, db: Session = Depends(get_db)
-):
-    try:
-        reclamo = reclamo_repository.get_reclamo_by_id(db, id_reclamo)
-
-        if reclamo is None:
-            raise CustomException(status_code=404, detail="Reclamo not found")
-
-        for key, value in reclamo_updated.dict().items():
-            setattr(reclamo, key, value)
-
-        db.add(reclamo)
-        db.commit()
-        db.refresh(reclamo)
-        return reclamo
-    except CustomException as ce:
-        raise HTTPException(status_code=ce.status_code, detail=ce.detail)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail="Error interno del servidor")
-
-
 @router.patch("/reclamos/actions/{id_reclamo}")
 def update_reclamo(
     id_reclamo: int, reclamo_actions: ReclamoActions, db: Session = Depends(get_db)
@@ -103,6 +80,8 @@ def update_reclamo(
 
         if reclamo is None:
             raise CustomException(status_code=404, detail="Reclamo not found")
+
+        reclamo.estado = 1
 
         for key, value in reclamo_actions.dict().items():
             setattr(reclamo, key, value)
