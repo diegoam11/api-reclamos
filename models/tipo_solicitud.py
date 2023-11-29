@@ -10,3 +10,4 @@ class TipoSolicitud(Base):
     nombre = Column(String)
 
     solicitudes = relationship("Solicitud", back_populates="tipo_solicitud")
+    area = relationship("Area", back_populates="tipos_solicitud")

@@ -8,6 +8,7 @@ from schemas.base import SolicitudBase
 router = APIRouter()
 Solicitud.metadata.create_all(bind=database_config.engine)
 
+
 def get_db() -> Session:
     db = database_config.SessionLocal()
     try:
@@ -15,7 +16,9 @@ def get_db() -> Session:
     finally:
         db.close()
 
-solicitud_repository = SolicitudRepository() 
+
+solicitud_repository = SolicitudRepository()
+
 
 @router.post("/solicitudes/")
 async def create_solicitudes(solicitud: SolicitudBase, db: Session = Depends(get_db)):
@@ -25,18 +28,17 @@ async def create_solicitudes(solicitud: SolicitudBase, db: Session = Depends(get
     except Exception as e:
         raise HTTPException(status_code=500, detail="Error interno del servidor")
 
+
 @router.get("/solicitudes/")
 def get_solicitudes(db: Session = Depends(get_db)):
-    try:
-        db_solicitudes = solicitud_repository.get_solicitudes(db) 
-        return db_solicitudes
-    except Exception as e:
-        raise HTTPException(status_code=500, detail="Error interno del servidor")
+    db_solicitudes = solicitud_repository.get_solicitudes(db)
+    return db_solicitudes
+
 
 @router.get("/solicitudes/{id_cliente}")
 def get_solicitud_de_cliente(id_cliente: int, db: Session = Depends(get_db)):
     try:
-        solicitud = solicitud_repository.get_solicitud_by_id_cliente(db, id_cliente)  
+        solicitud = solicitud_repository.get_solicitud_by_id_cliente(db, id_cliente)
         if not solicitud:
             raise HTTPException(status_code=404, detail="Solicitud no encontrada")
         return solicitud
