@@ -2,13 +2,13 @@ from sqlalchemy.orm import Session
 from sqlalchemy import case
 from models.solicitud import Solicitud
 from models.tipo_solicitud import TipoSolicitud
-from datetime import datetime, timedelta
+from utils.date_utils import calculate_fecha_limite, date_now
 
 
 class SolicitudRepository:
     def create_solicitud(self, db: Session, solicitud_data):
-        fecha_solicitud = datetime.now()
-        fecha_limite = self._calculate_fecha_limite(fecha_solicitud)
+        fecha_solicitud = date_now()
+        fecha_limite = calculate_fecha_limite(fecha_solicitud)
 
         solicitud_data.update(
             {
@@ -25,7 +25,6 @@ class SolicitudRepository:
         return db_solicitud
 
     def _get_solicitudes_query(self, db: Session):
-        print("hola")
         return db.query(
             Solicitud.id_solicitud,
             Solicitud.tipo_bien_contratado.label("id_tipo_bien_contratado"),
@@ -39,10 +38,9 @@ class SolicitudRepository:
             Solicitud.peticion_cliente,
             Solicitud.estado.label("id_estado"),
             case(
-                (Solicitud.estado is None, "pendiente"),
-                (Solicitud.estado == 0, "pendiente"),
-                (Solicitud.estado == 1, "derivado"),
-                (Solicitud.estado == 2, "resuelto"),
+                (Solicitud.estado is None, "derivado"),
+                (Solicitud.estado == 0, "derivado"),
+                (Solicitud.estado == 1, "resuelto"),
             ).label("estado"),
             Solicitud.fecha_limite,
             Solicitud.id_tipo_solicitud,
@@ -55,7 +53,6 @@ class SolicitudRepository:
         ).join(TipoSolicitud)
 
     def get_solicitudes(self, db: Session):
-
         solicitudes = self._get_solicitudes_query(db).all()
 
         result = []
@@ -65,27 +62,13 @@ class SolicitudRepository:
 
         return result
 
-    def get_solicitud_by_id_cliente(self, db: Session, id_cliente: int):
-        solicitudes = (
-            self._get_solicitudes_query(db).filter(Solicitud.id_cliente == id_cliente).all()
+    def get_solicitud_by_id(self, db: Session, id_solicitud: int):
+        return (
+            db.query(Solicitud)
+            .filter(Solicitud.id_solicitud == id_solicitud)
+            .one_or_none()
         )
 
-        result = []
-        for solicitud in solicitudes:
-            solicitud_dict = dict(solicitud._asdict())
-            result.append(solicitud_dict)
-
-        return result
-
-    def _calculate_fecha_limite(self, fecha_solicitud):
-        delta_dias = 15
-
-        fecha_limite = fecha_solicitud
-        dias_habiles = 0
-
-        while dias_habiles < delta_dias:
-            fecha_limite += timedelta(days=1)
-            if fecha_limite.weekday() not in [5, 6]:
-                dias_habiles += 1
-
-        return fecha_limite
+    def get_solicitud_by_id_cliente(self, db: Session, id_cliente: int):
+        reclamo = db.query(Solicitud).filter(Solicitud.id_cliente == id_cliente).all()
+        return reclamo or None

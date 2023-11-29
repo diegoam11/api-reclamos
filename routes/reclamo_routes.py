@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from config.database import database_config
 from models.reclamo import Reclamo
 from repositories.reclamo_repository import ReclamoRepository
-from schemas.base import ReclamoBase, ReclamoUpdated, ReclamoActions
+from schemas.base import ReclamoBase, RqsActions
 
 
 class CustomException(Exception):
@@ -73,7 +73,7 @@ def get_reclamo_de_cliente(id_cliente: int, db: Session = Depends(get_db)):
 
 @router.patch("/reclamos/actions/{id_reclamo}")
 def update_reclamo(
-    id_reclamo: int, reclamo_actions: ReclamoActions, db: Session = Depends(get_db)
+    id_reclamo: int, reclamo_actions: RqsActions, db: Session = Depends(get_db)
 ):
     try:
         reclamo = reclamo_repository.get_reclamo_by_id(db, id_reclamo)

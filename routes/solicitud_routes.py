@@ -3,7 +3,14 @@ from sqlalchemy.orm import Session
 from config.database import database_config
 from models.solicitud import Solicitud
 from repositories.solicitud_repository import SolicitudRepository
-from schemas.base import SolicitudBase
+from schemas.base import RqsActions, SolicitudBase
+
+
+class CustomException(Exception):
+    def __init__(self, status_code: int, detail: str):
+        self.status_code = status_code
+        self.detail = detail
+
 
 router = APIRouter()
 Solicitud.metadata.create_all(bind=database_config.engine)
@@ -35,12 +42,51 @@ def get_solicitudes(db: Session = Depends(get_db)):
     return db_solicitudes
 
 
-@router.get("/solicitudes/{id_cliente}")
-def get_solicitud_de_cliente(id_cliente: int, db: Session = Depends(get_db)):
+@router.get("/solicitudes/{id_solicitud}")
+def get_solicitud_por_id(id_solicitud: int, db: Session = Depends(get_db)):
     try:
-        solicitud = solicitud_repository.get_solicitud_by_id_cliente(db, id_cliente)
+        solicitud = solicitud_repository.get_solicitud_by_id(db, id_solicitud)
         if not solicitud:
             raise HTTPException(status_code=404, detail="Solicitud no encontrada")
         return solicitud
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="Error interno del servidor")
+
+
+@router.get("/solicitudes/cliente/{id_cliente}")
+def get_solicitud_de_cliente(id_cliente: int, db: Session = Depends(get_db)):
+    try:
+        solicitudes = solicitud_repository.get_solicitud_by_id_cliente(db, id_cliente)
+        if solicitudes is None:
+            raise CustomException(status_code=404, detail="Solicitud not found")
+        return solicitudes
+    except CustomException as ce:
+        raise HTTPException(status_code=ce.status_code, detail=ce.detail)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="Error interno del servidor")
+
+
+@router.patch("/solicitudes/actions/{id_solicitud}")
+def update_reclamo(
+    id_solicitud: int, solicitud_actions: RqsActions, db: Session = Depends(get_db)
+):
+    try:
+        solicitud = solicitud_repository.get_solicitud_by_id(db, id_solicitud)
+
+        if solicitud is None:
+            raise CustomException(status_code=404, detail="Solicitud not found")
+
+        solicitud.estado = 1
+
+        for key, value in solicitud_actions.dict().items():
+            setattr(solicitud, key, value)
+
+        db.add(solicitud)
+        db.commit()
+        db.refresh(solicitud)
+        return solicitud
+
+    except CustomException as ce:
+        raise HTTPException(status_code=ce.status_code, detail=ce.detail)
     except Exception as e:
         raise HTTPException(status_code=500, detail="Error interno del servidor")

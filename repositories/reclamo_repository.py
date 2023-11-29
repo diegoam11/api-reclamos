@@ -2,13 +2,12 @@ from sqlalchemy.orm import Session
 from sqlalchemy import case
 from models.reclamo import Reclamo
 from models.tipo_reclamo import TipoReclamo
-from datetime import datetime, timedelta
-
+from utils.date_utils import calculate_fecha_limite, date_now
 
 class ReclamoRepository:
     def create_reclamo(self, db: Session, reclamo_data):
-        fecha_reclamo = datetime.now()
-        fecha_limite = self._calculate_fecha_limite(fecha_reclamo)
+        fecha_reclamo = date_now()
+        fecha_limite = calculate_fecha_limite(fecha_reclamo)
 
         reclamo_data.update(
             {
@@ -70,16 +69,3 @@ class ReclamoRepository:
     def get_reclamo_by_id_cliente(self, db: Session, id_cliente: int):
         reclamo = db.query(Reclamo).filter(Reclamo.id_cliente == id_cliente).all()
         return reclamo or None
-
-    def _calculate_fecha_limite(self, fecha_reclamo):
-        delta_dias = 15
-
-        fecha_limite = fecha_reclamo
-        dias_habiles = 0
-
-        while dias_habiles < delta_dias:
-            fecha_limite += timedelta(days=1)
-            if fecha_limite.weekday() not in [5, 6]:
-                dias_habiles += 1
-
-        return fecha_limite
