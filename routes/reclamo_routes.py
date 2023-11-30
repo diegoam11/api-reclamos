@@ -82,9 +82,8 @@ def update_reclamo(
             raise CustomException(status_code=404, detail="Reclamo not found")
 
         reclamo.estado = 1
-
-        for key, value in reclamo_actions.dict().items():
-            setattr(reclamo, key, value)
+        reclamo.acciones_tomadas = reclamo_actions.acciones_tomadas
+        reclamo.fecha_respuesta = reclamo_actions.fecha_respuesta
 
         db.add(reclamo)
         db.commit()

@@ -84,8 +84,9 @@ def update_reclamo(
 
         queja.estado = 1
 
-        for key, value in queja_actions.dict().items():
-            setattr(queja, key, value)
+        queja.estado = 1
+        queja.acciones_tomadas = queja_actions.acciones_tomadas
+        queja.fecha_respuesta = queja_actions.fecha_respuesta
 
         db.add(queja)
         db.commit()

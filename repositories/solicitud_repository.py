@@ -27,11 +27,15 @@ class SolicitudRepository:
     def _get_solicitudes_query(self, db: Session):
         return db.query(
             Solicitud.id_solicitud,
+            Solicitud.id_tipo_solicitud,
+            TipoSolicitud.nombre.label("tipo_solicitud"),
+            Solicitud.id_cliente,
             Solicitud.tipo_bien_contratado.label("id_tipo_bien_contratado"),
             case(
                 (Solicitud.tipo_bien_contratado == 0, "producto"),
                 (Solicitud.tipo_bien_contratado != 0, "servicio"),
             ).label("tipo_bien_contratado"),
+            Solicitud.orden_compra,
             Solicitud.codigo_producto,
             Solicitud.forma_respuesta,
             Solicitud.detalle_solicitud,
@@ -42,12 +46,8 @@ class SolicitudRepository:
                 (Solicitud.estado == 0, "derivado"),
                 (Solicitud.estado == 1, "resuelto"),
             ).label("estado"),
-            Solicitud.fecha_limite,
-            Solicitud.id_tipo_solicitud,
-            TipoSolicitud.nombre.label("tipo_solicitud"),
-            Solicitud.id_cliente,
-            Solicitud.orden_compra,
             Solicitud.fecha_solicitud,
+            Solicitud.fecha_limite,
             Solicitud.acciones_tomadas,
             Solicitud.fecha_respuesta,
         ).join(TipoSolicitud)
@@ -70,5 +70,12 @@ class SolicitudRepository:
         )
 
     def get_solicitud_by_id_cliente(self, db: Session, id_cliente: int):
-        reclamo = db.query(Solicitud).filter(Solicitud.id_cliente == id_cliente).all()
-        return reclamo or None
+        solicitudes = (
+            self._get_solicitudes_query(db)
+            .filter(Solicitud.id_cliente == id_cliente)
+            .all()
+        )
+
+        result = [dict(solicitud._asdict()) for solicitud in solicitudes]
+
+        return result or None

@@ -26,11 +26,13 @@ class QuejaRepository:
     def _get_quejas_query(self, db: Session):
         return db.query(
             Queja.id_queja,
+            Queja.id_cliente,
             Queja.tipo_bien_contratado.label("id_tipo_bien_contratado"),
             case(
                 (Queja.tipo_bien_contratado == 0, "producto"),
                 (Queja.tipo_bien_contratado != 0, "servicio"),
             ).label("tipo_bien_contratado"),
+            Queja.orden_compra,
             Queja.codigo_producto,
             Queja.forma_respuesta,
             Queja.detalle_queja,
@@ -41,11 +43,9 @@ class QuejaRepository:
                 (Queja.estado == 0, "derivado"),
                 (Queja.estado == 1, "resuelto"),
             ).label("estado"),
-            Queja.fecha_limite,
-            Queja.id_cliente,
-            Queja.orden_compra,
             Queja.fecha_compra,
             Queja.fecha_queja,
+            Queja.fecha_limite,
             Queja.acciones_tomadas,
             Queja.fecha_respuesta,
         )
@@ -64,5 +64,6 @@ class QuejaRepository:
         return db.query(Queja).filter(Queja.id_queja == id_queja).one_or_none()
 
     def get_queja_by_id_cliente(self, db: Session, id_cliente: int):
-        queja = db.query(Queja).filter(Queja.id_cliente == id_cliente).all()
-        return queja or None
+        quejas = self._get_quejas_query(db).filter(Queja.id_cliente == id_cliente).all()
+        result = [dict(queja._asdict()) for queja in quejas]
+        return result or None
