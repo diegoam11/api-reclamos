@@ -38,8 +38,20 @@ async def create_solicitudes(solicitud: SolicitudBase, db: Session = Depends(get
 
 @router.get("/solicitudes/")
 def get_solicitudes(db: Session = Depends(get_db)):
-    db_solicitudes = solicitud_repository.get_solicitudes(db)
-    return db_solicitudes
+    try:
+        db_solicitudes = solicitud_repository.get_solicitudes(db)
+        return db_solicitudes
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="Error interno del servidor")
+
+
+@router.get("/solicitudes/area/{id_area}")
+def get_solicitudes_by_area(id_area: int, db: Session = Depends(get_db)):
+    try:
+        solicitudes = solicitud_repository.get_solicitudes_by_area(db, id_area)
+        return solicitudes
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="Error interno del servidor")
 
 
 @router.get("/solicitudes/{id_solicitud}")

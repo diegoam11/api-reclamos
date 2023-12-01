@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import case
+from models.area import Area
 from models.reclamo import Reclamo
 from models.tipo_reclamo import TipoReclamo
 from utils.date_utils import calculate_fecha_limite, date_now
@@ -30,6 +31,15 @@ class ReclamoRepository:
             Reclamo.id_tipo_reclamo,
             TipoReclamo.nombre.label("tipo_reclamo"),
             Reclamo.id_cliente,
+            TipoReclamo.id_area.label("id_area_asociada"),
+            case(
+                (TipoReclamo.id_area == 1, "Clientes"),
+                (TipoReclamo.id_area == 2, "Ventas"),
+                (TipoReclamo.id_area == 3, "Reclamos, Solicitudes y Quejas"),
+                (TipoReclamo.id_area == 4, "Reparaciones"),
+                (TipoReclamo.id_area == 5, "Marketing"),
+                (TipoReclamo.id_area == 6, "Autoconsulta"),
+            ).label("area_asociada"),
             Reclamo.tipo_bien_contratado.label("id_tipo_bien_contratado"),
             case(
                 (Reclamo.tipo_bien_contratado == 0, "producto"),
@@ -71,8 +81,11 @@ class ReclamoRepository:
         reclamos = (
             self._get_reclamos_query(db).filter(Reclamo.id_cliente == id_cliente).all()
         )
-
-        # Convertir los resultados a una lista de diccionarios
+        
         result = [dict(reclamo._asdict()) for reclamo in reclamos]
+        return result or None
 
+    def get_reclamos_by_area(self, db: Session, id_area: int):
+        reclamos = self._get_reclamos_query(db).filter(TipoReclamo.id_area == id_area).all()
+        result = [dict(reclamo._asdict()) for reclamo in reclamos]
         return result or None

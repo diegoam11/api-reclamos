@@ -30,6 +30,15 @@ class SolicitudRepository:
             Solicitud.id_tipo_solicitud,
             TipoSolicitud.nombre.label("tipo_solicitud"),
             Solicitud.id_cliente,
+            TipoSolicitud.id_area.label("id_area_asociada"),
+            case(
+                (TipoSolicitud.id_area == 1, "Clientes"),
+                (TipoSolicitud.id_area == 2, "Ventas"),
+                (TipoSolicitud.id_area == 3, "Reclamos, Solicitudes y Quejas"),
+                (TipoSolicitud.id_area == 4, "Reparaciones"),
+                (TipoSolicitud.id_area == 5, "Marketing"),
+                (TipoSolicitud.id_area == 6, "Autoconsulta"),
+            ).label("area_asociada"),
             Solicitud.tipo_bien_contratado.label("id_tipo_bien_contratado"),
             case(
                 (Solicitud.tipo_bien_contratado == 0, "producto"),
@@ -78,4 +87,13 @@ class SolicitudRepository:
 
         result = [dict(solicitud._asdict()) for solicitud in solicitudes]
 
+        return result or None
+
+    def get_solicitudes_by_area(self, db: Session, id_area: int):
+        solicitudes = (
+            self._get_solicitudes_query(db)
+            .filter(TipoSolicitud.id_area == id_area)
+            .all()
+        )
+        result = [dict(solicitud._asdict()) for solicitud in solicitudes]
         return result or None

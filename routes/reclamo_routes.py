@@ -45,8 +45,17 @@ def get_reclamos(db: Session = Depends(get_db)):
         raise HTTPException(status_code=500, detail="Error interno del servidor")
 
 
+@router.get("/reclamos/area/{id_area}")
+def get_reclamos_by_area(id_area: int, db: Session = Depends(get_db)):
+    try:
+        reclamos = reclamo_repository.get_reclamos_by_area(db, id_area)
+        return reclamos
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="Error interno del servidor")
+
+
 @router.get("/reclamos/{id_reclamo}")
-def get_reclamo_por_id(id_reclamo: int, db: Session = Depends(get_db)):
+def get_reclamo_by_id(id_reclamo: int, db: Session = Depends(get_db)):
     try:
         reclamo = reclamo_repository.get_reclamo_by_id(db, id_reclamo)
         if reclamo is None:
@@ -59,7 +68,7 @@ def get_reclamo_por_id(id_reclamo: int, db: Session = Depends(get_db)):
 
 
 @router.get("/reclamos/cliente/{id_cliente}")
-def get_reclamo_de_cliente(id_cliente: int, db: Session = Depends(get_db)):
+def get_reclamo_by_cliente(id_cliente: int, db: Session = Depends(get_db)):
     try:
         reclamo = reclamo_repository.get_reclamo_by_id_cliente(db, id_cliente)
         if reclamo is None:
